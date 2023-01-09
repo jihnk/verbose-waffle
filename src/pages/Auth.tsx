@@ -51,12 +51,10 @@ const Auth = () => {
 	};
 
 	const getSignUp = async () => {
-		const { data, status } = await signup(inputs);
-		if (status === 200) {
-			alert(data.message);
-			setInputs({ email: "", password: "" });
-			navigate(`/auth`);
-		}
+		const signupResult = await signup(inputs);
+		alert(signupResult.message);
+		setInputs({ email: "", password: "" });
+		navigate(`/auth`);
 	};
 
 	const checkIsNew = () => {
