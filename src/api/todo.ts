@@ -5,12 +5,10 @@ const baseUrl = "http://localhost:8080";
 
 const getTodos = async () => {
 	try {
-		const { data, status } = await axios.get(`${baseUrl}/todos`, {
+		const { data } = await axios.get(`${baseUrl}/todos`, {
 			headers: { authorization: localStorage.getItem("token") },
 		});
-		if (status === 200) {
-			return data;
-		}
+		return data;
 	} catch (error) {
 		console.log(error);
 	}
