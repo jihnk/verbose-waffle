@@ -1,5 +1,5 @@
 import axios from "axios";
-import { TodoRequestType } from "./../../types/todo";
+import { TodoRequestType, TodoUpdateType } from "./../../types/todo";
 
 const baseUrl = "http://localhost:8080";
 
@@ -29,21 +29,21 @@ const getTodoById = async (id: string) => {
 
 const createTodo = async (requestData: TodoRequestType) => {
 	try {
-		const result = await axios.post(`${baseUrl}/todos`, requestData, {
+		const { data } = await axios.post(`${baseUrl}/todos`, requestData, {
 			headers: { authorization: localStorage.getItem("token") },
 		});
-		return result;
+		return data;
 	} catch (error) {
 		console.log(error);
 	}
 };
 
-const updateTodo = async (requestData: any, id: any) => {
+const updateTodo = async ({ inputs, id }: TodoUpdateType) => {
 	try {
-		const result = await axios.put(`${baseUrl}/todos/${id}`, requestData, {
+		const { data } = await axios.put(`${baseUrl}/todos/${id}`, inputs, {
 			headers: { authorization: localStorage.getItem("token") },
 		});
-		return result;
+		return data;
 	} catch (error) {
 		console.log(error);
 	}
@@ -51,10 +51,10 @@ const updateTodo = async (requestData: any, id: any) => {
 
 const deleteTodo = async (id: string) => {
 	try {
-		const result = await axios.delete(`${baseUrl}/todos/${id}`, {
+		const { data } = await axios.delete(`${baseUrl}/todos/${id}`, {
 			headers: { authorization: localStorage.getItem("token") },
 		});
-		return result;
+		return data;
 	} catch (error) {
 		console.log(error);
 	}

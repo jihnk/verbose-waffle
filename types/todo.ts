@@ -2,6 +2,10 @@ interface TodoRequestType {
 	title: string;
 	content: string;
 }
+interface TodoUpdateType {
+	inputs: TodoRequestType;
+	id: string;
+}
 
 interface TodoType {
 	title: string;
@@ -11,4 +15,4 @@ interface TodoType {
 	updatedAt: string;
 }
 
-export type { TodoRequestType, TodoType };
+export type { TodoRequestType, TodoUpdateType, TodoType };

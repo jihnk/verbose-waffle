@@ -1,6 +1,8 @@
+import { AxiosError } from "axios";
 import { useState } from "react";
+import { useMutation, useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
-import { TodoType } from "../../types/todo";
+import { TodoType, TodoUpdateType } from "../../types/todo";
 import { deleteTodo, updateTodo } from "../api/todo";
 
 interface TodoItemProps {
@@ -9,6 +11,25 @@ interface TodoItemProps {
 
 const TodoItem = ({ todo }: TodoItemProps) => {
 	const navigate = useNavigate();
+	const queryClient = useQueryClient();
+	const deleteTodoItem = useMutation<{ data: null }, AxiosError, string>(
+		deleteTodo,
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries("todos");
+			},
+		}
+	);
+
+	const updateTodoItem = useMutation<
+		{ data: TodoType },
+		AxiosError,
+		TodoUpdateType
+	>(updateTodo, {
+		onSuccess: () => {
+			queryClient.invalidateQueries("todos");
+		},
+	});
 
 	const [inputs, setInputs] = useState({
 		title: todo.title,
@@ -23,10 +44,6 @@ const TodoItem = ({ todo }: TodoItemProps) => {
 			...inputs,
 			[name]: value,
 		});
-	};
-
-	const deleteTodoItem = async (id: string) => {
-		await deleteTodo(id);
 	};
 
 	const { id, title, content } = todo;
@@ -61,13 +78,13 @@ const TodoItem = ({ todo }: TodoItemProps) => {
 					onClick={() => {
 						setIsEdit(!isEdit);
 						if (isEdit) {
-							updateTodo(inputs, id);
+							updateTodoItem.mutate({ inputs, id });
 						}
 					}}
 				>
 					수정
 				</button>
-				<button onClick={() => deleteTodoItem(id)}>삭제</button>
+				<button onClick={() => deleteTodoItem.mutate(id)}>삭제</button>
 			</div>
 		</>
 	);

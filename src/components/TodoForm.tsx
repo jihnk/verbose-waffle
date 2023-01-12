@@ -1,7 +1,22 @@
 import { useState } from "react";
+import { AxiosError } from "axios";
+import { useMutation, useQueryClient } from "react-query";
 import { createTodo } from "../api/todo";
+import { TodoRequestType, TodoType } from "../../types/todo";
 
 const TodoForm = () => {
+	const queryClient = useQueryClient();
+
+	const { mutate, isLoading, isError, error } = useMutation<
+		{ data: TodoType },
+		AxiosError,
+		TodoRequestType
+	>(createTodo, {
+		onSuccess: () => {
+			queryClient.invalidateQueries("todos");
+		},
+	});
+
 	const [inputs, setInputs] = useState({
 		title: "",
 		content: "",
@@ -16,7 +31,7 @@ const TodoForm = () => {
 	};
 
 	const addTodoItem = () => {
-		createTodo(inputs);
+		mutate(inputs);
 		setInputs({ title: "", content: "" });
 	};
 
@@ -24,6 +39,9 @@ const TodoForm = () => {
 		e.preventDefault();
 		addTodoItem();
 	};
+
+	if (isLoading) return <span>로딩중!</span>;
+	if (isError) return <span>에러! {error.message}</span>;
 
 	return (
 		<>
